@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+
+  local-db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: aaa
+      POSTGRES_DB: bookmarks
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
