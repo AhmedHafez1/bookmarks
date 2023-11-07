@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-
   local-db:
     image: postgres:16
     restart: always
@@ -11,9 +10,3 @@ services:
       POSTGRES_DB: bookmarks
     ports:
       - 5432:5432
-
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
