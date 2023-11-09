@@ -18,6 +18,8 @@ model User {
   password String
   name String?
   age  Int
+
+  @@map("users")
 }
 
 model Bookmark {
@@ -27,4 +29,6 @@ model Bookmark {
   tiltle      String
   description String
   link        String
+
+  @@map("bookmarks")
 }
