@@ -44,8 +44,8 @@ export class AuthService {
     });
 
     const passwordCorrect = await bcrypt.compare(
-      user.password,
       userDto.password,
+      user.password,
     );
 
     if (!passwordCorrect) {

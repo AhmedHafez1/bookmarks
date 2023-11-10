@@ -11,13 +11,14 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  email    String @unique
-  password String
-  name String?
-  age  Int
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  email     String     @unique
+  password  String
+  name      String?
+  age       Int
+  Bookmark  Bookmark[]
 
   @@map("users")
 }
@@ -29,6 +30,8 @@ model Bookmark {
   tiltle      String
   description String
   link        String
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
 
   @@map("bookmarks")
 }
