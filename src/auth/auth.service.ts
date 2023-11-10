@@ -7,9 +7,15 @@ import {
 import { CreateUserDto, LoginUserDto } from './dto';
 import * as bcrypt from 'bcrypt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwt: JwtService,
+    private config: ConfigService,
+  ) {}
 
   async signup(user: CreateUserDto): Promise<CreateUserDto> {
     const { name, password, age, email } = user;
@@ -38,7 +44,10 @@ export class AuthService {
     }
   }
 
-  async login(userDto: LoginUserDto) {
+  async login(userDto: LoginUserDto): Promise<{
+    id: number;
+    access_token: string;
+  }> {
     const user = await this.prisma.user.findUniqueOrThrow({
       where: { email: userDto.email },
     });
@@ -52,8 +61,20 @@ export class AuthService {
       throw new UnauthorizedException('Password is not correct!');
     }
 
-    delete user.password;
+    return this.getAccessToken(user.id, user.email);
+  }
 
-    return user;
+  async getAccessToken(
+    id,
+    email,
+  ): Promise<{ id: number; access_token: string }> {
+    const payload = { id, email };
+
+    const access_token = await this.jwt.signAsync(payload, {
+      expiresIn: '2d',
+      secret: this.config.get('JWT_SECRET'),
+    });
+
+    return { id, access_token };
   }
 }
