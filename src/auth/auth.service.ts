@@ -17,7 +17,9 @@ export class AuthService {
     private config: ConfigService,
   ) {}
 
-  async signup(user: CreateUserDto): Promise<CreateUserDto> {
+  async signup(
+    user: CreateUserDto,
+  ): Promise<{ id: number; access_token: string }> {
     const { name, password, age, email } = user;
 
     const hash = await bcrypt.hash(password, 10);
@@ -30,10 +32,9 @@ export class AuthService {
           age,
           password: hash,
         },
-        select: { id: true, name: true, email: true, age: true },
       });
 
-      return createdUser;
+      return this.getAccessToken(createdUser.id, createdUser.email);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
